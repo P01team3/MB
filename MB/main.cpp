@@ -1,18 +1,3 @@
-//
-//Потрібно зробити бота, вибір мови при запуску програми і оформити все поліпше
-//
-
-/*
-Потрібно зробити можливість вибрати авторозклад кораблів для гравця.
-І також потрібно добавити підтримку укр. мови(я пробував
-але не получилось, не знаю чому)
-
-Маю ідею зробити 3 плеєр мод, і приблизно знаю як це
-можна реалізувати. А ще можна зробити вибір розміру
-поля, від якого буде залежити кількість кораблів.
-                                                      комент: Свята
-*/
-
 #include <iostream>
 #include <time.h>
 #include <unistd.h>
@@ -180,7 +165,7 @@ public:
                 if (move == 'u') {
                     goto replacing;
                 }
-                goto skip;
+              goto skip;
             default:
                 if (rotate == 0) {
                     for (int i = 0; i < lenght; i++) {
@@ -408,416 +393,375 @@ public:
     }
 
     void shootBot() {
-        int temp = ship_amount;
+      int temp = ship_amount;
     stage1:
-        x = rand() % 10;
-        y = rand() % 10;
-        temp_x = x;
-        temp_y = y;
-        cout << "\033[2J\033[1;1H";
-        shootPrint();
-        cout << "Хід Бота";
-        sleep(4);
-        if (stage == 1) {
-            if (layout[x][y] == " ⊠ " || layout[x][y] == " ○ ") {
-                goto stage1;
-            }
-            else if (layout[x][y] == " . ") {
-                layout[x][y] = " ○ ";
-            }
-            else {
-                layout[x][y] = " ⊠ ";
-                hitCheck();
-                if (ship_amount > 0 && ship_amount == temp) {
-                    stage++;
-                }
-                else if (ship_amount > 0) {
-                    shootBot();
-                }
-                else {
-                    cout << "\033[2J\033[1;1H";
-                    shootPrint();
-                    cout << "Переміг Бот";
-                }
-            }
+      x = rand()%10;
+      y = rand()%10;
+      temp_x = x;
+      temp_y = y;
+      cout << "\033[2J\033[1;1H";
+      cout << "Хід Бота\n";
+      if(stage == 1){
+        if (layout[x][y] == " ⊠ " || layout[x][y] == " ○ ") {
+          goto stage1;
+        } else if (layout[x][y] == " . ") {
+          layout[x][y] = " ○ ";
+          shootPrint(); 
+          sleep(4);
+        } else {
+          layout[x][y] = " ⊠ ";
+          hitCheck();
+          if (ship_amount > 0 && ship_amount == temp) {
+            shootPrint();
+            sleep(4);
+            stage++;
+            cout<<endl<<"--------------------------"<<endl;
+          } else if(ship_amount > 0){
+            shootPrint();
+            sleep(4);
+            shootBot();
+          } else {
+            cout << "\033[2J\033[1;1H";
+            shootPrint();
+            cout << "Переміг Бот";
+          }
         }
-        if (stage == 2) {
+      }
+      if (stage == 2){
         stage2:
-            side = rand() % 4 + 1;
-            if (side == 1) {
-                if (x - 1 < 0 || (x - 1 >= 0 && layout[x - 1][y] == " ○ " && layout[x - 1][y] == " ⊠ ")) {
-                    goto stage2;
-                }
-                x--;
-                shootPrint();
-                sleep(4);
-                if (layout[x][y] == " . ") {
-                    layout[x][y] = " ○ ";
-                }
-                else {
-                    layout[x][y] = " ⊠ ";
-                    hitCheck();
-                    if (ship_amount > 0 && ship_amount == temp) {
-                        stage++;
-                        h_or_v = 1;
-                    }
-                    else if (ship_amount > 0) {
-                        stage = 1;
-                        shootBot();
-                    }
-                    else {
-                        cout << "\033[2J\033[1;1H";
-                        shootPrint();
-                        cout << "Переміг Бот";
-                    }
-                }
+        side = rand()%4+1;
+        if(side == 1){
+          if(x-1 < 0 || (x-1 >= 0 && layout[x-1][y] == " ○ " && layout[x-1][y] == " ⊠ ")){
+            goto stage2;
+          } 
+          x--;
+          shootPrint();
+          sleep(4);
+          if(layout[x][y] == " . "){
+            layout[x][y] = " ○ ";
+          } 
+          else {
+            layout[x][y] = " ⊠ ";
+            hitCheck();
+            if (ship_amount > 0 && ship_amount == temp) {
+              stage++;
+              h_or_v = 1;
+              cout<<endl<<"--------------------------"<<endl;
+            } else if(ship_amount > 0){
+              stage = 1;
+              shootBot();
+            } else {
+              cout << "\033[2J\033[1;1H";
+              shootPrint();
+              cout << "Переміг Бот";
             }
-            else if (side == 2) {
-                if (y + 1 > 9 && layout[x][y + 1] == " ○ " && layout[y + 1][y] == " ⊠ ") {
-                    goto stage2;
-                }
-                y++;
-                shootPrint();
-                sleep(4);
-                if (layout[x][y] == " . ") {
-                    layout[x][y] = " ○ ";
-                }
-                else {
-                    layout[x][y] = " ⊠ ";
-                    hitCheck();
-                    if (ship_amount > 0 && ship_amount == temp) {
-                        stage++;
-                        h_or_v = 0;
-                    }
-                    else if (ship_amount > 0) {
-                        stage = 1;
-                        shootBot();
-                    }
-                    else {
-                        cout << "\033[2J\033[1;1H";
-                        shootPrint();
-                        cout << "Переміг Бот";
-                    }
-                }
+          }
+        } else if(side == 2){
+          if(y+1 > 9 && layout[x][y+1] == " ○ " && layout[y+1][y] == " ⊠ "){
+            goto stage2;
+          } 
+          y++;
+          shootPrint();
+          sleep(4);
+          if(layout[x][y] == " . "){
+            layout[x][y] = " ○ ";
+          } 
+          else {
+            layout[x][y] = " ⊠ ";
+            hitCheck();
+            if (ship_amount > 0 && ship_amount == temp) {
+              stage++;
+              h_or_v = 0;
+              cout<<endl<<"--------------------------"<<endl;
+            } else if(ship_amount > 0){
+              stage = 1;
+              shootBot();
+            } else {
+              cout << "\033[2J\033[1;1H";
+              shootPrint();
+              cout << "Переміг Бот";
             }
-            else if (side == 3) {
-                if (x + 1 > 9 && layout[x + 1][y] == " ○ " && layout[x + 1][y] == " ⊠ ") {
-                    goto stage2;
-                }
-                x++;
-                shootPrint();
-                sleep(4);
-                if (layout[x][y] == " . ") {
-                    layout[x][y] = " ○ ";
-                }
-                else {
-                    layout[x][y] = " ⊠ ";
-                    hitCheck();
-                    if (ship_amount > 0 && ship_amount == temp) {
-                        stage++;
-                        h_or_v = 1;
-                    }
-                    else if (ship_amount > 0) {
-                        stage = 1;
-                        shootBot();
-                    }
-                    else {
-                        cout << "\033[2J\033[1;1H";
-                        shootPrint();
-                        cout << "Переміг Бот";
-                    }
-                }
+          }
+        } else if(side == 3){
+          if(x+1 > 9 && layout[x+1][y] == " ○ " && layout[x+1][y] == " ⊠ "){
+            goto stage2;
+          } 
+          x++;
+          shootPrint();
+          sleep(4);
+          if(layout[x][y] == " . "){
+            layout[x][y] = " ○ ";
+          } else {
+            layout[x][y] = " ⊠ ";
+            hitCheck();
+            if (ship_amount > 0 && ship_amount == temp) {
+              stage++;
+              h_or_v = 1;
+              cout<<endl<<"--------------------------"<<endl;
+            } else if(ship_amount > 0){
+              stage = 1;
+              shootBot();
+            } else {
+              cout << "\033[2J\033[1;1H";
+              shootPrint();
+              cout << "Переміг Бот";
             }
-            else if (side == 4) {
-                if (y - 1 < 0 && layout[y - 1][y] == " ○ " && layout[y - 1][y] == " ⊠ ") {
-                    goto stage2;
-                }
-                y--;
-                shootPrint();
-                sleep(4);
-                if (layout[x][y] == " . ") {
-                    layout[x][y] = " ○ ";
-                }
-                else {
-                    layout[x][y] = " ⊠ ";
-                    hitCheck();
-                    if (ship_amount > 0 && ship_amount == temp) {
-                        stage++;
-                        h_or_v = 0;
-                    }
-                    else if (ship_amount > 0) {
-                        stage = 1;
-                        shootBot();
-                    }
-                    else {
-                        cout << "\033[2J\033[1;1H";
-                        shootPrint();
-                        cout << "Переміг Бот";
-                    }
-                }
+          }
+        } else if(side == 4){
+          if(y-1 < 0 && layout[y-1][y] == " ○ " && layout[y-1][y] == " ⊠ "){
+            goto stage2;
+          } 
+          y--;
+          shootPrint();
+          sleep(4);
+          if(layout[x][y] == " . "){
+            layout[x][y] = " ○ ";
+          } else {
+            layout[x][y] = " ⊠ ";
+            hitCheck();
+            if (ship_amount > 0 && ship_amount == temp) {
+              stage++;
+              h_or_v = 0;
+              cout<<endl<<"--------------------------"<<endl;
+            } else if(ship_amount > 0){
+              stage = 1;
+              shootBot();
+            } else {
+              cout << "\033[2J\033[1;1H";
+              shootPrint();
+              cout << "Переміг Бот";
             }
-        } if (stage == 3) {
-            side = rand() % 2 + 1;
+          }
+        }
+      } if(stage == 3){
+        side = rand()%2+1;
         stage3:
-            if (h_or_v == 0) {
-                if (side == 1 && y - 1 >= 0) {
-                    y--;
-                    if (layout[x][y] == " ⊠ ") {
-                        goto stage3;
-                    }
-                    else if (layout[x][y] == " . ") {
-                        shootPrint();
-                        sleep(4);
-                        layout[x][y] = " ○ ";
-                    }
-                    else if (layout[x][y] == " ○ ") {
-                        side = 2;
-                        goto stage3;
-                    }
-                    else {
-                        layout[x][y] = " ⊠ ";
-                        shootPrint();
-                        sleep(4);
-                        hitCheck();
-                        if (ship_amount > 0 && ship_amount == temp) {
-                            stage++;
-                        }
-                        else if (ship_amount > 0) {
-                            stage = 1;
-                            shootBot();
-                        }
-                        else {
-                            cout << "\033[2J\033[1;1H";
-                            shootPrint();
-                            cout << "Переміг Бот";
-                        }
-                    }
-                }
-                else if (side == 2 && y + 1 <= 9) {
-                    y++;
-                    if (layout[x][y] == " ⊠ ") {
-                        goto stage3;
-                    }
-                    else if (layout[x][y] == " . ") {
-                        layout[x][y] = " ○ ";
-                    }
-                    else if (layout[x][y] == " ○ ") {
-                        side = 1;
-                        goto stage3;
-                    }
-                    else {
-                        layout[x][y] = " ⊠ ";
-                        shootPrint();
-                        sleep(4);
-                        hitCheck();
-                        if (ship_amount > 0 && ship_amount == temp) {
-                            stage++;
-                        }
-                        else if (ship_amount > 0) {
-                            stage = 1;
-                            shootBot();
-                        }
-                        else {
-                            cout << "\033[2J\033[1;1H";
-                            shootPrint();
-                            cout << "Переміг Бот";
-                        }
-                    }
-                }
+        if(h_or_v == 0){
+          if(side == 1 && y-1 >= 0){
+            y--;
+            if(layout[x][y] == " ⊠ "){
+              goto stage3;
+            } else if(layout[x][y] == " . "){
+              shootPrint();
+              sleep(4);
+              layout[x][y] = " ○ ";
+            } else if(layout[x][y] == " ○ "){
+              side = 2;
+              goto stage3;
+            } else {
+              layout[x][y] = " ⊠ ";
+              shootPrint();
+              sleep(4);
+              hitCheck();
+              if (ship_amount > 0 && ship_amount == temp) {
+                stage++;
+                cout<<endl<<"--------------------------"<<endl;
+              } else if(ship_amount > 0){
+                stage = 1;
+                shootBot();
+              } else {
+                cout << "\033[2J\033[1;1H";
+                shootPrint();
+                cout << "Переміг Бот";
+              }
             }
-            else if (h_or_v == 1) {
-                if (side == 1 && x - 1 >= 0) {
-                    x--;
-                    if (layout[x][y] == " ⊠ ") {
-                        goto stage3;
-                    }
-                    else if (layout[x][y] == " . ") {
-                        layout[x][y] = " ○ ";
-                    }
-                    else if (layout[x][y] == " ○ ") {
-                        side = 2;
-                        goto stage3;
-                    }
-                    else {
-                        layout[x][y] = " ⊠ ";
-                        shootPrint();
-                        sleep(4);
-                        hitCheck();
-                        if (ship_amount > 0 && ship_amount == temp) {
-                            stage++;
-                        }
-                        else if (ship_amount > 0) {
-                            stage = 1;
-                            shootBot();
-                        }
-                        else {
-                            cout << "\033[2J\033[1;1H";
-                            shootPrint();
-                            cout << "Переміг Бот";
-                        }
-                    }
-                }
-                else if (side == 2 <= 9) {
-                    x++;
-                    if (layout[x][y] == " ⊠ ") {
-                        goto stage3;
-                    }
-                    else if (layout[x][y] == " . ") {
-                        layout[x][y] = " ○ ";
-                    }
-                    else if (layout[x][y] == " ○ ") {
-                        side = 1;
-                        goto stage3;
-                    }
-                    else {
-                        layout[x][y] = " ⊠ ";
-                        shootPrint();
-                        sleep(4);
-                        hitCheck();
-                        if (ship_amount > 0 && ship_amount == temp) {
-                            stage++;
-                        }
-                        else if (ship_amount > 0) {
-                            stage = 1;
-                            shootBot();
-                        }
-                        else {
-                            cout << "\033[2J\033[1;1H";
-                            shootPrint();
-                            cout << "Переміг Бот";
-                        }
-                    }
-                }
+          } else if(side == 2 && y+1 <= 9) {
+            y++;
+            if(layout[x][y] == " ⊠ "){
+              goto stage3;
+            } else if(layout[x][y] == " . "){
+              layout[x][y] = " ○ ";
+            } else if(layout[x][y] == " ○ "){
+              side = 1;
+              goto stage3;
+            } else {
+              layout[x][y] = " ⊠ ";
+              shootPrint();
+              sleep(4);
+              hitCheck();
+              if (ship_amount > 0 && ship_amount == temp) {
+                stage++;
+                cout<<endl<<"--------------------------"<<endl;
+              } else if(ship_amount > 0){
+                stage = 1;
+                shootBot();
+              } else {
+                cout << "\033[2J\033[1;1H";
+                shootPrint();
+                cout << "Переміг Бот";
+              }
             }
-            else {
-                side = rand() % 2 + 1;
-                goto stage3;
+          } else {
+            side = rand()%2+1;
+            goto stage3;
+          }
+        } else if(h_or_v == 1) {
+          if(side == 1 && x-1 >= 0){
+            x--;
+            if(layout[x][y] == " ⊠ "){
+              goto stage3;
+            } else if(layout[x][y] == " . "){
+              layout[x][y] = " ○ ";
+            } else if(layout[x][y] == " ○ "){
+              side = 2;
+              goto stage3;
+            } else {
+              layout[x][y] = " ⊠ ";
+              shootPrint();
+              sleep(4);
+              hitCheck();
+              if (ship_amount > 0 && ship_amount == temp) {
+                stage++;
+                cout<<endl<<"--------------------------"<<endl;
+              } else if(ship_amount > 0){
+                stage = 1;
+                shootBot();
+              } else {
+                cout << "\033[2J\033[1;1H";
+                shootPrint();
+                cout << "Переміг Бот";
+              }
             }
+          } else if(side == 2 <= 9){
+            x++;
+            if(layout[x][y] == " ⊠ "){
+              goto stage3;
+            } else if(layout[x][y] == " . "){
+              layout[x][y] = " ○ ";
+            } else if(layout[x][y] == " ○ "){
+              side = 1;
+              goto stage3;
+            } else {
+              layout[x][y] = " ⊠ ";
+              shootPrint();
+              sleep(4);
+              hitCheck();
+              if (ship_amount > 0 && ship_amount == temp) {
+                stage++;
+                cout<<endl<<"--------------------------"<<endl;
+              } else if(ship_amount > 0){
+                stage = 1;
+                shootBot();
+              } else {
+                cout << "\033[2J\033[1;1H";
+                shootPrint();
+                cout << "Переміг Бот";
+              }
+            }
+          } else {
+            side = rand()%2+1;
+            goto stage3;
+          }
         }
-        if (stage == 4) {
-            side = rand() % 2 + 1;
+      }
+      if(stage == 4){
+        side = rand()%2+1;
         stage4:
-            if (h_or_v == 0) {
-                if (side == 1 && x - 1 >= 0) {
-                    x--;
-                    if (layout[x][y] == " ⊠ ") {
-                        goto stage4;
-                    }
-                    else if (layout[x][y] == " . ") {
-                        layout[x][y] = " ○ ";
-                    }
-                    else if (layout[x][y] == " ○ ") {
-                        side = 2;
-                        goto stage4;
-                    }
-                    else {
-                        layout[x][y] = " ⊠ ";
-                        shootPrint();
-                        sleep(4);
-                        hitCheck();
-                        if (ship_amount > 0) {
-                            stage = 1;
-                            shootBot();
-                        }
-                        else {
-                            cout << "\033[2J\033[1;1H";
-                            shootPrint();
-                            cout << "Переміг Бот";
-                        }
-                    }
-                }
-                else if (side == 2 && y + 1 <= 9) {
-                    y++;
-                    if (layout[x][y] == " ⊠ ") {
-                        goto stage4;
-                    }
-                    else if (layout[x][y] == " . ") {
-                        layout[x][y] = " ○ ";
-                    }
-                    else if (layout[x][y] == " ○ ") {
-                        side = 1;
-                        goto stage4;
-                    }
-                    else {
-                        layout[x][y] = " ⊠ ";
-                        shootPrint();
-                        sleep(4);
-                        hitCheck();
-                        if (ship_amount > 0) {
-                            stage = 1;
-                            shootBot();
-                        }
-                        else {
-                            cout << "\033[2J\033[1;1H";
-                            shootPrint();
-                            cout << "Переміг Бот";
-                        }
-                    }
-                }
+        if(h_or_v == 0){
+          if(side == 1 && x-1 >= 0){
+            x--;
+            if(layout[x][y] == " ⊠ "){
+              goto stage4;
+            } else if(layout[x][y] == " . "){
+              layout[x][y] = " ○ ";
+            } else if(layout[x][y] == " ○ "){
+              side = 2;
+              goto stage4;
+            } else {
+              layout[x][y] = " ⊠ ";
+              shootPrint();
+              sleep(4);
+              hitCheck();
+              if(ship_amount > 0){
+                stage = 1;
+                shootBot();
+              } else {
+                cout << "\033[2J\033[1;1H";
+                shootPrint();
+                cout << "Переміг Бот";
+              }
             }
-            else if (h_or_v == 1) {
-                if (side == 1 && x - 1 >= 0) {
-                    x--;
-                    if (layout[x][y] == " ⊠ ") {
-                        goto stage4;
-                    }
-                    else if (layout[x][y] == " . ") {
-                        layout[x][y] = " ○ ";
-                    }
-                    else if (layout[x][y] == " ○ ") {
-                        side = 2;
-                        goto stage4;
-                    }
-                    else {
-                        layout[x][y] = " ⊠ ";
-                        shootPrint();
-                        sleep(4);
-                        hitCheck();
-                        if (ship_amount > 0) {
-                            stage = 1;
-                            shootBot();
-                        }
-                        else {
-                            cout << "\033[2J\033[1;1H";
-                            shootPrint();
-                            cout << "Переміг Бот";
-                        }
-                    }
-                }
-                else if (side == 2 <= 9) {
-                    x++;
-                    if (layout[x][y] == " ⊠ ") {
-                        goto stage4;
-                    }
-                    else if (layout[x][y] == " . ") {
-                        layout[x][y] = " ○ ";
-                    }
-                    else if (layout[x][y] == " ○ ") {
-                        side = 1;
-                        goto stage4;
-                    }
-                    else {
-                        layout[x][y] = " ⊠ ";
-                        shootPrint();
-                        sleep(4);
-                        hitCheck();
-                        if (ship_amount > 0) {
-                            stage = 1;
-                            shootBot();
-                        }
-                        else {
-                            cout << "\033[2J\033[1;1H";
-                            shootPrint();
-                            cout << "Переміг Бот";
-                        }
-                    }
-                }
+          } else if(side == 2 && y+1 <= 9) {
+            y++;
+            if(layout[x][y] == " ⊠ "){
+              goto stage4;
+            } else if(layout[x][y] == " . "){
+              layout[x][y] = " ○ ";
+            } else if(layout[x][y] == " ○ "){
+              side = 1;
+              goto stage4;
+            } else {
+              layout[x][y] = " ⊠ ";
+              shootPrint();
+              sleep(4);
+              hitCheck();
+              if(ship_amount > 0){
+                stage = 1;
+                shootBot();
+              } else {
+                cout << "\033[2J\033[1;1H";
+                shootPrint();
+                cout << "Переміг Бот";
+              }
             }
-            else {
-                side = rand() % 2 + 1;
-                goto stage4;
+          } else {
+            side = rand()%2+1;
+            goto stage4;
+          }
+        } else if(h_or_v == 1) {
+          if(side == 1 && x-1 >= 0){
+            x--;
+            if(layout[x][y] == " ⊠ "){
+              goto stage4;
+            } else if(layout[x][y] == " . "){
+              layout[x][y] = " ○ ";
+            } else if(layout[x][y] == " ○ "){
+              side = 2;
+              goto stage4;
+            } else {
+              layout[x][y] = " ⊠ ";
+              shootPrint();
+              sleep(4);
+              hitCheck();
+              if(ship_amount > 0){
+                stage = 1;
+                shootBot();
+              } else {
+                cout << "\033[2J\033[1;1H";
+                shootPrint();
+                cout << "Переміг Бот";
+              }
             }
+          } else if(side == 2 <= 9){
+            x++;
+            if(layout[x][y] == " ⊠ "){
+              goto stage4;
+            } else if(layout[x][y] == " . "){
+              layout[x][y] = " ○ ";
+            } else if(layout[x][y] == " ○ "){
+              side = 1;
+              goto stage4;
+            } else {
+              layout[x][y] = " ⊠ ";
+              shootPrint();
+              sleep(4);
+              hitCheck();
+              if(ship_amount > 0){
+                stage = 1;
+                shootBot();
+              } else {
+                cout << "\033[2J\033[1;1H";
+                shootPrint();
+                cout << "Переміг Бот";
+              }
+            }
+          } else {
+            side = rand()%2+1;
+            goto stage4;
+          }
         }
+      }
+
     }
 };
 
@@ -826,7 +770,9 @@ class Bot {
     int x, y, rotate;
     int lenght = 4;
     char move;
-public:
+
+  public:
+
     int ship_amount = 10;
     Bot() {
         fillWithDots(layout);
@@ -836,35 +782,36 @@ public:
             rotate = rand() % 2;
             x = rand() % 10;
             y = rand() % 10;
-            if (rotate == 0) {
-                for (int i = y; i < y + lenght; i++) {
-                    if (i < 10 && layout[x][i] == " . ") {
-                        continue;
-                    }
-                    else {
-                        goto turn2;
-                    }
+            if(rotate == 0){
+              for(int i = y; i < y+lenght; i++){
+                if(i < 10 && layout[x][i] == " . " ){
+                  continue;
                 }
+                else{
+                  goto turn2;
+                }
+              }
+            }
+            else{
+              for(int i = x; i < x+lenght; i++){
+                if(i < 10 && layout[i][y] == " . " ){
+                  continue;
+                }
+                else{
+                  goto turn2;
+                }
+              }
+            }
+            if (rotate == 0) {
+              for (int i = 0; i < lenght; i++) {
+                layout[x][y + i] = " □ ";
+              }
             }
             else {
-                for (int i = x; i < x + lenght; i++) {
-                    if (i < 10 && layout[i][y] == " . ") {
-                        continue;
-                    }
-                    else {
-                        goto turn2;
-                    }
-                }
-            }
-            if (rotate == 0) {
-                for (int i = 0; i < lenght; i++) {
-                    layout[x][y + i] = " □ ";
-                }
-            }
-            else {
-                for (int i = 0; i < lenght; i++) {
-                    layout[x + i][y] = " □ ";
-                }
+              for (int i = 0; i < lenght; i++) {
+                layout[x + i][y] = " □ ";
+              }
+
             }
             XDistribution();
             ship_amount--;
@@ -1080,7 +1027,7 @@ void twoPlayerGame() {
     cin >> name;
     cout << "\033[2J\033[1;1H";
     Player player2(name);
-here:
+    here:
     if (player1.ship_amount > 0) {
         player2.shoot(player1);
     }
@@ -1096,27 +1043,29 @@ here:
     }
 }
 
-void onePlayerGame() {
-    string name;
-    cout << "Гравець 1, введіть своє імя: ";
-    cin >> name;
-    cout << "\033[2J\033[1;1H";
-    Player player1(name);
-    Bot bot;
+
+void onePlayerGame(){
+  string name;
+  cout << "Гравець 1, введіть своє імя: ";
+  cin >> name;
+  cout << "\033[2J\033[1;1H";
+  Player player1(name);
+  Bot bot;
 here2:
-    if (player1.ship_amount > 0) {
-        bot.shoot(player1);
-    }
-    else {
-        return;
-    }
-    if (bot.ship_amount > 0) {
-        player1.shootBot();
-        goto here2;
-    }
-    else {
-        return;
-    }
+  if (player1.ship_amount > 0) {
+      bot.shoot(player1);
+  }
+  else {
+    return;
+  }
+  if (bot.ship_amount > 0) {
+      player1.shootBot();
+      goto here2;
+  }
+  else {
+      return;
+  }
+
 }
 
 int main() {
@@ -1138,15 +1087,14 @@ int main() {
     cin >> play_or_exit;
     cout << "\033[2J\033[1;1H";
     if (play_or_exit == 1) {
-        cout << "Граємо з ботом чи з іншим гравцем?" << endl;
-        cout << "1 - з ботом, 2 - з іншим гравцем: ";
-        cin >> play_or_exit;
-        if (play_or_exit == 1) {
-            onePlayerGame();
-        }
-        else {
-            twoPlayerGame();
-        }
+      cout<<"Граємо з ботом чи з іншим гравцем?"<<endl;
+      cout<<"1 - з ботом, 2 - з іншим гравцем: ";
+      cin>>play_or_exit;
+      if(play_or_exit == 1){
+        onePlayerGame();
+      } else {
+        twoPlayerGame();
+      }
     }
     cout << "Бувай!";
     return 0;
