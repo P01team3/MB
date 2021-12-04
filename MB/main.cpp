@@ -344,19 +344,24 @@ public:
       temp_y = y;
       cout << "\033[2J\033[1;1H";
       cout << "Хід Бота\n";
-      shootPrint();      
-      sleep(4);
       if(stage == 1){
         if (layout[x][y] == " ⊠ " || layout[x][y] == " ○ ") {
           goto stage1;
         } else if (layout[x][y] == " . ") {
           layout[x][y] = " ○ ";
+          shootPrint(); 
+          sleep(4);
         } else {
           layout[x][y] = " ⊠ ";
           hitCheck();
           if (ship_amount > 0 && ship_amount == temp) {
+            shootPrint();
+            sleep(4);
             stage++;
+            cout<<endl<<"--------------------------"<<endl;
           } else if(ship_amount > 0){
+            shootPrint();
+            sleep(4);
             shootBot();
           } else {
             cout << "\033[2J\033[1;1H";
@@ -384,6 +389,7 @@ public:
             if (ship_amount > 0 && ship_amount == temp) {
               stage++;
               h_or_v = 1;
+              cout<<endl<<"--------------------------"<<endl;
             } else if(ship_amount > 0){
               stage = 1;
               shootBot();
@@ -409,6 +415,7 @@ public:
             if (ship_amount > 0 && ship_amount == temp) {
               stage++;
               h_or_v = 0;
+              cout<<endl<<"--------------------------"<<endl;
             } else if(ship_amount > 0){
               stage = 1;
               shootBot();
@@ -433,6 +440,7 @@ public:
             if (ship_amount > 0 && ship_amount == temp) {
               stage++;
               h_or_v = 1;
+              cout<<endl<<"--------------------------"<<endl;
             } else if(ship_amount > 0){
               stage = 1;
               shootBot();
@@ -457,6 +465,7 @@ public:
             if (ship_amount > 0 && ship_amount == temp) {
               stage++;
               h_or_v = 0;
+              cout<<endl<<"--------------------------"<<endl;
             } else if(ship_amount > 0){
               stage = 1;
               shootBot();
@@ -489,6 +498,7 @@ public:
               hitCheck();
               if (ship_amount > 0 && ship_amount == temp) {
                 stage++;
+                cout<<endl<<"--------------------------"<<endl;
               } else if(ship_amount > 0){
                 stage = 1;
                 shootBot();
@@ -514,6 +524,7 @@ public:
               hitCheck();
               if (ship_amount > 0 && ship_amount == temp) {
                 stage++;
+                cout<<endl<<"--------------------------"<<endl;
               } else if(ship_amount > 0){
                 stage = 1;
                 shootBot();
@@ -544,6 +555,7 @@ public:
               hitCheck();
               if (ship_amount > 0 && ship_amount == temp) {
                 stage++;
+                cout<<endl<<"--------------------------"<<endl;
               } else if(ship_amount > 0){
                 stage = 1;
                 shootBot();
@@ -569,6 +581,7 @@ public:
               hitCheck();
               if (ship_amount > 0 && ship_amount == temp) {
                 stage++;
+                cout<<endl<<"--------------------------"<<endl;
               } else if(ship_amount > 0){
                 stage = 1;
                 shootBot();
