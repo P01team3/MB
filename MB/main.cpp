@@ -91,6 +91,7 @@ public:
                         temp_layout[x + lenght][y] = " ▣ ";
                         x++;
                     }
+                    y--;
                 }
                 goto turn1;
             case 'd':
@@ -126,9 +127,60 @@ public:
                 }
                 goto turn1;
             case 'u':
-                autoFill();
+            replacing:
+                lenght = 4;
+                ship_amount = 10;
+                fillWithDots(layout);
+                fillWithDots(temp_layout);
+                while (ship_amount != 0) {
+                turn2:
+                    rotate = rand() % 2;
+                    x = rand() % 10;
+                    y = rand() % 10;
+                    if (rotate == 0) {
+                        for (int i = y; i < y + lenght; i++) {
+                            if (i < 10 && layout[x][i] == " . ") {
+                                continue;
+                            }
+                            else {
+                                goto turn2;
+                            }
+                        }
+                    }
+                    else {
+                        for (int i = x; i < x + lenght; i++) {
+                            if (i < 10 && layout[i][y] == " . ") {
+                                continue;
+                            }
+                            else {
+                                goto turn2;
+                            }
+                        }
+                    }
+                    if (rotate == 0) {
+                        for (int i = 0; i < lenght; i++) {
+                            layout[x][y + i] = " □ ";
+                        }
+                    }
+                    else {
+                        for (int i = 0; i < lenght; i++) {
+                            layout[x + i][y] = " □ ";
+                        }
+                    }
+                    XDistribution();
+                    ship_amount--;
+                    cout << "\033[2J\033[1;1H";
+                    if (ship_amount == 9 || ship_amount == 7 || ship_amount == 4) {
+                        lenght -= 1;
+                    }
+                }
                 distrPrint();
-                break;
+                cout << "Введіть U для іншого варіанту ростановки, або любу іншу букву для вибору даної: ";
+                cin >> move;
+                if (move == 'u') {
+                    goto replacing;
+                }
+              goto skip;
             default:
                 if (rotate == 0) {
                     for (int i = 0; i < lenght; i++) {
@@ -160,6 +212,7 @@ public:
                 lenght += 1;
             }
         }
+    skip:
         ship_amount = 10;
         cout << "\033[2J\033[1;1H";
         distrPrint();
@@ -310,6 +363,37 @@ public:
                     return;
                 }
                 else if (i > y - 2 && i + 1 < 10 && layout[x][i] == " ⊠ " && layout[x][i + 1] == " ⊠ " && (i + 2 == 10 || (layout[x][i + 2] != " □ " && layout[x][i + 2] != " ⊠ ")) && (i - 1 == -1 || (layout[x][i - 1] != " □ " && layout[x][i - 1] != " ⊠ "))) {
+                    y = i;
+                    rotate = 0;
+                    lenght = 2;
+                    XDistribution();
+                    ship_amount--;
+                    return;
+                }
+            }
+        }
+        else if ((x != 0 && (layout[x - 1][y] == " □ " || layout[x - 1][y] == " ⊠ ")) || (x != 9 && (layout[x + 1][y] == " □ " || layout[x + 1][y] == " ⊠ "))) {
+            for (int i = x - 3; i < x + 3; i++) {
+                if (i < 0 || i > 9) {
+                    continue;
+                }
+                else if (i + 3 < 10 && layout[i][y] == " ⊠ " && layout[i + 1][y] == " ⊠ " && layout[i + 2][y] == " ⊠ " && layout[i + 3][y] == " ⊠ ") {
+                    x = i;
+                    rotate = 1;
+                    lenght = 4;
+                    XDistribution();
+                    ship_amount--;
+                    return;
+                }
+                else if (i > x - 3 && i + 2 < 10 && layout[i][y] == " ⊠ " && layout[i + 1][y] == " ⊠ " && layout[i + 2][y] == " ⊠ " && (i + 3 == 10 || layout[i + 3][y] != " □ ") && (i - 1 == -1 || layout[i - 1][y] != " □ ")) {
+                    x = i;
+                    rotate = 1;
+                    lenght = 3;
+                    XDistribution();
+                    ship_amount--;
+                    return;
+                }
+                else if (i > x - 2 && i + 1 < 10 && layout[i][y] == " ⊠ " && layout[i + 1][y] == " ⊠ " && (i + 2 == 10 || (layout[i + 2][y] != " □ " && layout[i + 2][y] != " ⊠ ")) && (i - 1 == -1 || (layout[i - 1][y] != " □ " && layout[i - 1][y] != " ⊠ "))) {
                     y = i;
                     rotate = 0;
                     lenght = 2;
@@ -845,6 +929,7 @@ public:
     }
 };
 
+
 void twoPlayerGame() {
     string name;
     cout << "Гравець 1, введіть своє імя: ";
@@ -855,7 +940,7 @@ void twoPlayerGame() {
     cin >> name;
     cout << "\033[2J\033[1;1H";
     Player player2(name);
-here:
+    here:
     if (player1.ship_amount > 0) {
         player2.shoot(player1);
     }
@@ -869,6 +954,31 @@ here:
     else {
         return;
     }
+}
+
+
+void onePlayerGame(){
+  string name;
+  cout << "Гравець 1, введіть своє імя: ";
+  cin >> name;
+  cout << "\033[2J\033[1;1H";
+  Player player1(name);
+  Bot bot;
+here2:
+  if (player1.ship_amount > 0) {
+      bot.shoot(player1);
+  }
+  else {
+    return;
+  }
+  if (bot.ship_amount > 0) {
+      player1.shootBot();
+      goto here2;
+  }
+  else {
+      return;
+  }
+
 }
 
 void onePlayerGame() {
@@ -913,16 +1023,8 @@ int main() {
     cin >> play_or_exit;
     cout << "\033[2J\033[1;1H";
     if (play_or_exit == 1) {
-        cout << "Граємо з ботом чи з іншим гравцем?" << endl;
-        cout << "1 - з ботом, 2 - з іншим гравцем: ";
-        cin >> play_or_exit;
-        if (play_or_exit == 1) {
-            onePlayerGame();
-        }
-        else {
-            twoPlayerGame();
-        }
+        twoPlayerGame();
     }
-    cout << "Бувай!";
+    cout << "\n\n\nБувай!";
     return 0;
 }
