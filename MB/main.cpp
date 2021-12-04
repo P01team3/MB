@@ -76,6 +76,7 @@ public:
                         temp_layout[x + lenght][y] = " ▣ ";
                         x++;
                     }
+                    y--;
                 }
                 goto turn1;
             case 'd':
@@ -760,6 +761,7 @@ public:
           }
         }
       }
+
     }
 };
 
@@ -768,7 +770,9 @@ class Bot {
     int x, y, rotate;
     int lenght = 4;
     char move;
+
   public:
+
     int ship_amount = 10;
     Bot() {
         fillWithDots(layout);
@@ -807,6 +811,7 @@ class Bot {
               for (int i = 0; i < lenght; i++) {
                 layout[x + i][y] = " □ ";
               }
+
             }
             XDistribution();
             ship_amount--;
@@ -1038,6 +1043,7 @@ void twoPlayerGame() {
     }
 }
 
+
 void onePlayerGame(){
   string name;
   cout << "Гравець 1, введіть своє імя: ";
@@ -1059,6 +1065,7 @@ here2:
   else {
       return;
   }
+
 }
 
 int main() {
