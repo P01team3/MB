@@ -16,7 +16,22 @@ class Player {
 public:
     int ship_amount = 10;
     string player;
+    Player() {
+        autoFill();
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (layout[i][j] == " ○ ") {
+                    layout[i][j] = " . ";
+                }
+            }
+        }
+        ship_amount = 10;
+        cout << "\033[2J\033[1;1H";
+    }
+
     Player(string playerT) : player{ playerT } {
+    restart:
+        lenght = 1;
         fillWithDots(layout);
         fillWithDots(temp_layout);
         while (ship_amount != 0) {
@@ -76,7 +91,6 @@ public:
                         temp_layout[x + lenght][y] = " ▣ ";
                         x++;
                     }
-                    y--;
                 }
                 goto turn1;
             case 'd':
@@ -112,60 +126,9 @@ public:
                 }
                 goto turn1;
             case 'u':
-            replacing:
-                lenght = 4;
-                ship_amount = 10;
-                fillWithDots(layout);
-                fillWithDots(temp_layout);
-                while (ship_amount != 0) {
-                turn2:
-                    rotate = rand() % 2;
-                    x = rand() % 10;
-                    y = rand() % 10;
-                    if (rotate == 0) {
-                        for (int i = y; i < y + lenght; i++) {
-                            if (i < 10 && layout[x][i] == " . ") {
-                                continue;
-                            }
-                            else {
-                                goto turn2;
-                            }
-                        }
-                    }
-                    else {
-                        for (int i = x; i < x + lenght; i++) {
-                            if (i < 10 && layout[i][y] == " . ") {
-                                continue;
-                            }
-                            else {
-                                goto turn2;
-                            }
-                        }
-                    }
-                    if (rotate == 0) {
-                        for (int i = 0; i < lenght; i++) {
-                            layout[x][y + i] = " □ ";
-                        }
-                    }
-                    else {
-                        for (int i = 0; i < lenght; i++) {
-                            layout[x + i][y] = " □ ";
-                        }
-                    }
-                    XDistribution();
-                    ship_amount--;
-                    cout << "\033[2J\033[1;1H";
-                    if (ship_amount == 9 || ship_amount == 7 || ship_amount == 4) {
-                        lenght -= 1;
-                    }
-                }
+                autoFill();
                 distrPrint();
-                cout << "Введіть U для іншого варіанту ростановки, або любу іншу букву для вибору даної: ";
-                cin >> move;
-                if (move == 'u') {
-                    goto replacing;
-                }
-                goto skip;
+                break;
             default:
                 if (rotate == 0) {
                     for (int i = 0; i < lenght; i++) {
@@ -197,8 +160,15 @@ public:
                 lenght += 1;
             }
         }
-    skip:
         ship_amount = 10;
+        cout << "\033[2J\033[1;1H";
+        distrPrint();
+        cout << "Введіть N для відміни, або любу іншу букву для підтвердження: ";
+        cin >> move;
+        cout << "\033[2J\033[1;1H";
+        if (move == 'n') {
+            goto restart;
+        }
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 if (layout[i][j] == " ○ ") {
@@ -206,7 +176,55 @@ public:
                 }
             }
         }
-        cout << "\033[2J\033[1;1H";
+    }
+
+    void autoFill() {
+        lenght = 4;
+        ship_amount = 10;
+        fillWithDots(layout);
+        fillWithDots(temp_layout);
+        while (ship_amount != 0) {
+        turn2:
+            rotate = rand() % 2;
+            x = rand() % 10;
+            y = rand() % 10;
+            if (rotate == 0) {
+                for (int i = y; i < y + lenght; i++) {
+                    if (i < 10 && layout[x][i] == " . ") {
+                        continue;
+                    }
+                    else {
+                        goto turn2;
+                    }
+                }
+            }
+            else {
+                for (int i = x; i < x + lenght; i++) {
+                    if (i < 10 && layout[i][y] == " . ") {
+                        continue;
+                    }
+                    else {
+                        goto turn2;
+                    }
+                }
+            }
+            if (rotate == 0) {
+                for (int i = 0; i < lenght; i++) {
+                    layout[x][y + i] = " □ ";
+                }
+            }
+            else {
+                for (int i = 0; i < lenght; i++) {
+                    layout[x + i][y] = " □ ";
+                }
+            }
+            XDistribution();
+            ship_amount--;
+            cout << "\033[2J\033[1;1H";
+            if (ship_amount == 9 || ship_amount == 7 || ship_amount == 4) {
+                lenght -= 1;
+            }
+        }
     }
 
     void fillWithDots(string layoutT[10][10]) {
@@ -220,7 +238,7 @@ public:
     void distrPrint() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                if (temp_layout[i][j] == " ▣ ") {
+                if (temp_layout[i][j] == " ▣ " || layout[i][j] == " ○ ") {
                     cout << temp_layout[i][j];
                 }
                 else {
@@ -828,258 +846,6 @@ public:
     }
 };
 
-class Bot {
-    string layout[10][10], temp_layout[10][10];
-    int x, y, rotate;
-    int lenght = 4;
-    char move;
-
-public:
-
-    int ship_amount = 10;
-    Bot() {
-        fillWithDots(layout);
-        fillWithDots(temp_layout);
-        while (ship_amount != 0) {
-        turn2:
-            rotate = rand() % 2;
-            x = rand() % 10;
-            y = rand() % 10;
-            if (rotate == 0) {
-                for (int i = y; i < y + lenght; i++) {
-                    if (i < 10 && layout[x][i] == " . ") {
-                        continue;
-                    }
-                    else {
-                        goto turn2;
-                    }
-                }
-            }
-            else {
-                for (int i = x; i < x + lenght; i++) {
-                    if (i < 10 && layout[i][y] == " . ") {
-                        continue;
-                    }
-                    else {
-                        goto turn2;
-                    }
-                }
-            }
-            if (rotate == 0) {
-                for (int i = 0; i < lenght; i++) {
-                    layout[x][y + i] = " □ ";
-                }
-            }
-            else {
-                for (int i = 0; i < lenght; i++) {
-                    layout[x + i][y] = " □ ";
-                }
-
-            }
-            XDistribution();
-            ship_amount--;
-            cout << "\033[2J\033[1;1H";
-            distrPrint();
-            if (ship_amount == 9 || ship_amount == 7 || ship_amount == 4) {
-                lenght -= 1;
-            }
-        }
-        ship_amount = 10;
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                if (layout[i][j] == " ○ ") {
-                    layout[i][j] = " . ";
-                }
-            }
-        }
-        cout << "\033[2J\033[1;1H";
-    }
-
-    void fillWithDots(string layoutT[10][10]) {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                layoutT[i][j] = " . ";
-            }
-        }
-    }
-
-    void distrPrint() {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                if (temp_layout[i][j] == " ▣ ") {
-                    cout << temp_layout[i][j];
-                }
-                else {
-                    cout << layout[i][j];
-                }
-            }
-            cout << endl;
-        }
-    }
-
-    void XDistribution() {
-        if (rotate == 0) {
-            for (int i = x - 1; i <= x + 1; i++) {
-                for (int j = y - 1; j <= y + lenght; j++) {
-                    if (j >= 0 && j <= 9 && i <= 9 && i >= 0 && layout[i][j] != " □ " && layout[i][j] != " ⊠ ") {
-                        layout[i][j] = " ○ ";
-                    }
-                }
-            }
-        }
-        else {
-            for (int i = x - 1; i <= x + lenght; i++) {
-                for (int j = y - 1; j <= y + 1; j++) {
-                    if (j >= 0 && j <= 9 && i <= 9 && i >= 0 && layout[i][j] != " □ " && layout[i][j] != " ⊠ ") {
-                        layout[i][j] = " ○ ";
-                    }
-                }
-            }
-        }
-    }
-
-    void shootPrint() {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                if (i == x && j == y && ship_amount > 0) {
-                    cout << " X ";
-                }
-                else if (layout[i][j] == " ⊠ " || layout[i][j] == " ○ ") {
-                    cout << layout[i][j];
-                }
-                else {
-                    cout << temp_layout[i][j];
-                }
-            }
-            cout << endl;
-        }
-    }
-
-    void hitCheck() {
-        if ((y != 0 && (layout[x][y - 1] == " □ " || layout[x][y - 1] == " ⊠ ")) || (y != 9 && (layout[x][y + 1] == " □ " || layout[x][y + 1] == " ⊠ "))) {
-            for (int i = y - 3; i < y + 3; i++) {
-                if (i < 0 || i > 9) {
-                    continue;
-                }
-                else if (i + 3 < 10 && layout[x][i] == " ⊠ " && layout[x][i + 1] == " ⊠ " && layout[x][i + 2] == " ⊠ " && layout[x][i + 3] == " ⊠ ") {
-                    y = i;
-                    rotate = 0;
-                    lenght = 4;
-                    XDistribution();
-                    ship_amount--;
-                    return;
-                }
-                else if (i > y - 3 && i + 2 < 10 && layout[x][i] == " ⊠ " && layout[x][i + 1] == " ⊠ " && layout[x][i + 2] == " ⊠ " && (i + 3 == 10 || layout[x][i + 3] != " □ ") && (i - 1 == -1 || layout[x][i - 1] != " □ ")) {
-                    y = i;
-                    rotate = 0;
-                    lenght = 3;
-                    XDistribution();
-                    ship_amount--;
-                    return;
-                }
-                else if (i > y - 2 && i + 1 < 10 && layout[x][i] == " ⊠ " && layout[x][i + 1] == " ⊠ " && (i + 2 == 10 || (layout[x][i + 2] != " □ " && layout[x][i + 2] != " ⊠ ")) && (i - 1 == -1 || (layout[x][i - 1] != " □ " && layout[x][i - 1] != " ⊠ "))) {
-                    y = i;
-                    rotate = 0;
-                    lenght = 2;
-                    XDistribution();
-                    ship_amount--;
-                    return;
-                }
-            }
-        }
-        else if ((x != 0 && (layout[x - 1][y] == " □ " || layout[x - 1][y] == " ⊠ ")) || (x != 9 && (layout[x + 1][y] == " □ " || layout[x + 1][y] == " ⊠ "))) {
-            for (int i = x - 3; i < x + 3; i++) {
-                if (i < 0 || i > 9) {
-                    continue;
-                }
-                else if (i + 3 < 10 && layout[i][y] == " ⊠ " && layout[i + 1][y] == " ⊠ " && layout[i + 2][y] == " ⊠ " && layout[i + 3][y] == " ⊠ ") {
-                    x = i;
-                    rotate = 1;
-                    lenght = 4;
-                    XDistribution();
-                    ship_amount--;
-                    return;
-                }
-                else if (i > x - 3 && i + 2 < 10 && layout[i][y] == " ⊠ " && layout[i + 1][y] == " ⊠ " && layout[i + 2][y] == " ⊠ " && (i + 3 == 10 || layout[i + 3][y] != " □ ") && (i - 1 == -1 || layout[i - 1][y] != " □ ")) {
-                    x = i;
-                    rotate = 1;
-                    lenght = 3;
-                    XDistribution();
-                    ship_amount--;
-                    return;
-                }
-                else if (i > x - 2 && i + 1 < 10 && layout[i][y] == " ⊠ " && layout[i + 1][y] == " ⊠ " && (i + 2 == 10 || (layout[i + 2][y] != " □ " && layout[i + 2][y] != " ⊠ ")) && (i - 1 == -1 || (layout[i - 1][y] != " □ " && layout[i - 1][y] != " ⊠ "))) {
-                    x = i;
-                    rotate = 1;
-                    lenght = 2;
-                    XDistribution();
-                    ship_amount--;
-                    return;
-                }
-            }
-        }
-        else {
-            lenght = 1;
-            ship_amount--;
-            XDistribution();
-        }
-    }
-
-    void shoot(Player playerT) {
-        x = 4;
-        y = 4;
-    metka:
-        cout << "\033[2J\033[1;1H";
-        shootPrint();
-        cout << "Хід гравця " << playerT.player;
-        cout << "\n\nВикористовуйте WASD для переміщення прицілу, та любу іншу літеру для вистрілу: ";
-        cin >> move;
-        switch (move) {
-        case 'w':
-            if (x != 0) {
-                x--;
-            }
-            goto metka;
-        case 'a':
-            if (y != 0) {
-                y--;
-            }
-            goto metka;
-        case 's':
-            if (x != 9) {
-                x++;
-            }
-            goto metka;
-        case 'd':
-            if (y != 9) {
-                y++;
-            }
-            goto metka;
-        default:
-            if (layout[x][y] == " ⊠ " || layout[x][y] == " ○ ") {
-                goto metka;
-            }
-            else if (layout[x][y] == " . ") {
-                layout[x][y] = " ○ ";
-                break;
-            }
-            else {
-                layout[x][y] = " ⊠ ";
-                hitCheck();
-                if (ship_amount > 0) {
-                    shoot(playerT);
-                }
-                else {
-                    cout << "\033[2J\033[1;1H";
-                    shootPrint();
-                    cout << "Переміг гравець " << playerT.player;
-                }
-            }
-        }
-    }
-};
-
-
 void twoPlayerGame() {
     string name;
     cout << "Гравець 1, введіть своє імя: ";
@@ -1106,14 +872,13 @@ here:
     }
 }
 
-
 void onePlayerGame() {
     string name;
     cout << "Гравець 1, введіть своє імя: ";
     cin >> name;
     cout << "\033[2J\033[1;1H";
     Player player1(name);
-    Bot bot;
+    Player bot;
 here2:
     if (player1.ship_amount > 0) {
         bot.shoot(player1);
@@ -1128,7 +893,6 @@ here2:
     else {
         return;
     }
-
 }
 
 int main() {
