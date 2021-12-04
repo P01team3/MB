@@ -350,6 +350,37 @@ public:
                 }
             }
         }
+        else if ((x != 0 && (layout[x - 1][y] == " □ " || layout[x - 1][y] == " ⊠ ")) || (x != 9 && (layout[x + 1][y] == " □ " || layout[x + 1][y] == " ⊠ "))) {
+            for (int i = x - 3; i < x + 3; i++) {
+                if (i < 0 || i > 9) {
+                    continue;
+                }
+                else if (i + 3 < 10 && layout[i][y] == " ⊠ " && layout[i + 1][y] == " ⊠ " && layout[i + 2][y] == " ⊠ " && layout[i + 3][y] == " ⊠ ") {
+                    x = i;
+                    rotate = 1;
+                    lenght = 4;
+                    XDistribution();
+                    ship_amount--;
+                    return;
+                }
+                else if (i > x - 3 && i + 2 < 10 && layout[i][y] == " ⊠ " && layout[i + 1][y] == " ⊠ " && layout[i + 2][y] == " ⊠ " && (i + 3 == 10 || layout[i + 3][y] != " □ ") && (i - 1 == -1 || layout[i - 1][y] != " □ ")) {
+                    x = i;
+                    rotate = 1;
+                    lenght = 3;
+                    XDistribution();
+                    ship_amount--;
+                    return;
+                }
+                else if (i > x - 2 && i + 1 < 10 && layout[i][y] == " ⊠ " && layout[i + 1][y] == " ⊠ " && (i + 2 == 10 || (layout[i + 2][y] != " □ " && layout[i + 2][y] != " ⊠ ")) && (i - 1 == -1 || (layout[i - 1][y] != " □ " && layout[i - 1][y] != " ⊠ "))) {
+                    x = i;
+                    rotate = 1;
+                    lenght = 2;
+                    XDistribution();
+                    ship_amount--;
+                    return;
+                }
+            }
+        }
         else {
             lenght = 1;
             ship_amount--;
@@ -845,6 +876,7 @@ public:
     }
 };
 
+
 void twoPlayerGame() {
     string name;
     cout << "Гравець 1, введіть своє імя: ";
@@ -869,6 +901,31 @@ here:
     else {
         return;
     }
+}
+
+
+void onePlayerGame() {
+    string name;
+    cout << "Гравець 1, введіть своє імя: ";
+    cin >> name;
+    cout << "\033[2J\033[1;1H";
+    Player player1(name);
+    Bot bot;
+here2:
+    if (player1.ship_amount > 0) {
+        bot.shoot(player1);
+    }
+    else {
+        return;
+    }
+    if (bot.ship_amount > 0) {
+        player1.shootBot();
+        goto here2;
+    }
+    else {
+        return;
+    }
+
 }
 
 void onePlayerGame() {
