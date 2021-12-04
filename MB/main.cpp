@@ -29,7 +29,7 @@ public:
         turn1:
             cout << "\033[2J\033[1;1H";
             distrPrint();
-            cout << "Хід гравця " << player << "\n\nВикористовуйте WASD для переміщення корабля, R для його повороту, і любу іншу букву для розміщення: ";
+            cout << "Хід гравця " << player << "\n\nВикористовуйте WASD для переміщення корабля, R для його повороту, і любу іншу букву для розміщення(також можна скористатись авторозстановкою вписавши букву U): ";
             cin >> move;
             switch (move) {
             case 'w':
@@ -110,6 +110,61 @@ public:
                     }
                 }
                 goto turn1;
+            case 'u':
+            replacing:
+                lenght = 4;
+                ship_amount = 10;
+                fillWithDots(layout);
+                fillWithDots(temp_layout);
+                while (ship_amount != 0) {
+                turn2:
+                    rotate = rand() % 2;
+                    x = rand() % 10;
+                    y = rand() % 10;
+                    if (rotate == 0) {
+                        for (int i = y; i < y + lenght; i++) {
+                            if (i < 10 && layout[x][i] == " . ") {
+                                continue;
+                            }
+                            else {
+                                goto turn2;
+                            }
+                        }
+                    }
+                    else {
+                        for (int i = x; i < x + lenght; i++) {
+                            if (i < 10 && layout[i][y] == " . ") {
+                                continue;
+                            }
+                            else {
+                                goto turn2;
+                            }
+                        }
+                    }
+                    if (rotate == 0) {
+                        for (int i = 0; i < lenght; i++) {
+                            layout[x][y + i] = " □ ";
+                        }
+                    }
+                    else {
+                        for (int i = 0; i < lenght; i++) {
+                            layout[x + i][y] = " □ ";
+                        }
+                    }
+                    XDistribution();
+                    ship_amount--;
+                    cout << "\033[2J\033[1;1H";
+                    if (ship_amount == 9 || ship_amount == 7 || ship_amount == 4) {
+                        lenght -= 1;
+                    }
+                }
+                distrPrint();
+                cout << "Введіть U для іншого варіанту ростановки, або любу іншу букву для вибору даної: ";
+                cin >> move;
+                if (move == 'u') {
+                    goto replacing;
+                }
+              goto skip;
             default:
                 if (rotate == 0) {
                     for (int i = 0; i < lenght; i++) {
@@ -141,6 +196,7 @@ public:
                 lenght += 1;
             }
         }
+    skip:
         ship_amount = 10;
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
