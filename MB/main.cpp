@@ -16,7 +16,22 @@ class Player {
 public:
     int ship_amount = 10;
     string player;
+    Player() {
+        autoFill();
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (layout[i][j] == " ○ ") {
+                    layout[i][j] = " . ";
+                }
+            }
+        }
+        ship_amount = 10;
+        cout << "\033[2J\033[1;1H";
+    }
+
     Player(string playerT) : player{ playerT } {
+    restart:
+        lenght = 1;
         fillWithDots(layout);
         fillWithDots(temp_layout);
         while (ship_amount != 0) {
@@ -111,60 +126,9 @@ public:
                 }
                 goto turn1;
             case 'u':
-              replacing:
-                lenght = 4;
-                ship_amount = 10;
-                fillWithDots(layout);
-                fillWithDots(temp_layout);
-                while (ship_amount != 0) {
-              turn2:
-                rotate = rand() % 2;
-                x = rand() % 10;
-                y = rand() % 10;
-                if(rotate == 0){
-                  for(int i = y; i < y+lenght; i++){
-                    if(i < 10 && layout[x][i] == " . " ){
-                      continue;
-                    }
-                    else{
-                      goto turn2;
-                    }
-                  }
-                }
-                else{
-                  for(int i = x; i < x+lenght; i++){
-                    if(i < 10 && layout[i][y] == " . " ){
-                      continue;
-                    }
-                    else{
-                      goto turn2;
-                    }
-                  }
-                }
-                if (rotate == 0) {
-                  for (int i = 0; i < lenght; i++) {
-                    layout[x][y + i] = " □ ";
-                  }
-                }
-                else {
-                  for (int i = 0; i < lenght; i++) {
-                    layout[x + i][y] = " □ ";
-                  }
-                }
-                XDistribution();
-                ship_amount--;
-                cout << "\033[2J\033[1;1H";
-                if (ship_amount == 9 || ship_amount == 7 || ship_amount == 4) {
-                  lenght -= 1;
-                }
-              }
-              distrPrint();
-              cout << "Введіть U для іншого варіанту ростановки, або любу іншу букву для вибору даної: ";
-              cin >> move;
-              if(move == 'u'){
-                goto replacing;
-              }
-              goto skip;
+                autoFill();
+                distrPrint();
+                break;
             default:
                 if (rotate == 0) {
                     for (int i = 0; i < lenght; i++) {
@@ -196,8 +160,15 @@ public:
                 lenght += 1;
             }
         }
-      skip:
         ship_amount = 10;
+        cout << "\033[2J\033[1;1H";
+        distrPrint();
+        cout << "Введіть N для відміни, або любу іншу букву для підтвердження: ";
+        cin >> move;
+        cout << "\033[2J\033[1;1H";
+        if (move == 'n') {
+            goto restart;
+        }
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 if (layout[i][j] == " ○ ") {
@@ -205,7 +176,55 @@ public:
                 }
             }
         }
-        cout << "\033[2J\033[1;1H";
+    }
+
+    void autoFill() {
+        lenght = 4;
+        ship_amount = 10;
+        fillWithDots(layout);
+        fillWithDots(temp_layout);
+        while (ship_amount != 0) {
+        turn2:
+            rotate = rand() % 2;
+            x = rand() % 10;
+            y = rand() % 10;
+            if (rotate == 0) {
+                for (int i = y; i < y + lenght; i++) {
+                    if (i < 10 && layout[x][i] == " . ") {
+                        continue;
+                    }
+                    else {
+                        goto turn2;
+                    }
+                }
+            }
+            else {
+                for (int i = x; i < x + lenght; i++) {
+                    if (i < 10 && layout[i][y] == " . ") {
+                        continue;
+                    }
+                    else {
+                        goto turn2;
+                    }
+                }
+            }
+            if (rotate == 0) {
+                for (int i = 0; i < lenght; i++) {
+                    layout[x][y + i] = " □ ";
+                }
+            }
+            else {
+                for (int i = 0; i < lenght; i++) {
+                    layout[x + i][y] = " □ ";
+                }
+            }
+            XDistribution();
+            ship_amount--;
+            cout << "\033[2J\033[1;1H";
+            if (ship_amount == 9 || ship_amount == 7 || ship_amount == 4) {
+                lenght -= 1;
+            }
+        }
     }
 
     void fillWithDots(string layoutT[10][10]) {
@@ -219,7 +238,7 @@ public:
     void distrPrint() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                if (temp_layout[i][j] == " ▣ ") {
+                if (temp_layout[i][j] == " ▣ " || layout[i][j] == " ○ ") {
                     cout << temp_layout[i][j];
                 }
                 else {
