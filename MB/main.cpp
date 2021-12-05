@@ -76,7 +76,6 @@ public:
                         temp_layout[x + lenght][y] = " ▣ ";
                         x++;
                     }
-                    y--;
                 }
                 goto turn1;
             case 'd':
@@ -112,59 +111,59 @@ public:
                 }
                 goto turn1;
             case 'u':
-            replacing:
+              replacing:
                 lenght = 4;
                 ship_amount = 10;
                 fillWithDots(layout);
                 fillWithDots(temp_layout);
                 while (ship_amount != 0) {
-                turn2:
-                    rotate = rand() % 2;
-                    x = rand() % 10;
-                    y = rand() % 10;
-                    if (rotate == 0) {
-                        for (int i = y; i < y + lenght; i++) {
-                            if (i < 10 && layout[x][i] == " . ") {
-                                continue;
-                            }
-                            else {
-                                goto turn2;
-                            }
-                        }
+              turn2:
+                rotate = rand() % 2;
+                x = rand() % 10;
+                y = rand() % 10;
+                if(rotate == 0){
+                  for(int i = y; i < y+lenght; i++){
+                    if(i < 10 && layout[x][i] == " . " ){
+                      continue;
                     }
-                    else {
-                        for (int i = x; i < x + lenght; i++) {
-                            if (i < 10 && layout[i][y] == " . ") {
-                                continue;
-                            }
-                            else {
-                                goto turn2;
-                            }
-                        }
+                    else{
+                      goto turn2;
                     }
-                    if (rotate == 0) {
-                        for (int i = 0; i < lenght; i++) {
-                            layout[x][y + i] = " □ ";
-                        }
-                    }
-                    else {
-                        for (int i = 0; i < lenght; i++) {
-                            layout[x + i][y] = " □ ";
-                        }
-                    }
-                    XDistribution();
-                    ship_amount--;
-                    cout << "\033[2J\033[1;1H";
-                    if (ship_amount == 9 || ship_amount == 7 || ship_amount == 4) {
-                        lenght -= 1;
-                    }
+                  }
                 }
-                distrPrint();
-                cout << "Введіть U для іншого варіанту ростановки, або любу іншу букву для вибору даної: ";
-                cin >> move;
-                if (move == 'u') {
-                    goto replacing;
+                else{
+                  for(int i = x; i < x+lenght; i++){
+                    if(i < 10 && layout[i][y] == " . " ){
+                      continue;
+                    }
+                    else{
+                      goto turn2;
+                    }
+                  }
                 }
+                if (rotate == 0) {
+                  for (int i = 0; i < lenght; i++) {
+                    layout[x][y + i] = " □ ";
+                  }
+                }
+                else {
+                  for (int i = 0; i < lenght; i++) {
+                    layout[x + i][y] = " □ ";
+                  }
+                }
+                XDistribution();
+                ship_amount--;
+                cout << "\033[2J\033[1;1H";
+                if (ship_amount == 9 || ship_amount == 7 || ship_amount == 4) {
+                  lenght -= 1;
+                }
+              }
+              distrPrint();
+              cout << "Введіть U для іншого варіанту ростановки, або любу іншу букву для вибору даної: ";
+              cin >> move;
+              if(move == 'u'){
+                goto replacing;
+              }
               goto skip;
             default:
                 if (rotate == 0) {
@@ -197,7 +196,7 @@ public:
                 lenght += 1;
             }
         }
-    skip:
+      skip:
         ship_amount = 10;
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -394,14 +393,14 @@ public:
 
     void shootBot() {
       int temp = ship_amount;
+      if(stage == 1){ 
     stage1:
-      x = rand()%10;
-      y = rand()%10;
-      temp_x = x;
-      temp_y = y;
-      cout << "\033[2J\033[1;1H";
-      cout << "Хід Бота\n";
-      if(stage == 1){
+        x = rand()%10;
+        y = rand()%10;
+        temp_x = x;
+        temp_y = y;
+        cout << "\033[2J\033[1;1H";
+        cout << "Хід Бота\n";
         if (layout[x][y] == " ⊠ " || layout[x][y] == " ○ ") {
           goto stage1;
         } else if (layout[x][y] == " . ") {
@@ -431,7 +430,7 @@ public:
         stage2:
         side = rand()%4+1;
         if(side == 1){
-          if(x-1 < 0 || (x-1 >= 0 && layout[x-1][y] == " ○ " && layout[x-1][y] == " ⊠ ")){
+          if(x-1 >= 0 || layout[x-1][y] == " ○ " || layout[x-1][y] == " ⊠ "){
             goto stage2;
           } 
           x--;
@@ -439,6 +438,7 @@ public:
           sleep(4);
           if(layout[x][y] == " . "){
             layout[x][y] = " ○ ";
+            x++;
           } 
           else {
             layout[x][y] = " ⊠ ";
@@ -457,7 +457,7 @@ public:
             }
           }
         } else if(side == 2){
-          if(y+1 > 9 && layout[x][y+1] == " ○ " && layout[y+1][y] == " ⊠ "){
+          if(y+1 > 9 || layout[x][y+1] == " ○ " || layout[y+1][y] == " ⊠ "){
             goto stage2;
           } 
           y++;
@@ -465,6 +465,7 @@ public:
           sleep(4);
           if(layout[x][y] == " . "){
             layout[x][y] = " ○ ";
+            y--;
           } 
           else {
             layout[x][y] = " ⊠ ";
@@ -483,7 +484,7 @@ public:
             }
           }
         } else if(side == 3){
-          if(x+1 > 9 && layout[x+1][y] == " ○ " && layout[x+1][y] == " ⊠ "){
+          if(x+1 > 9 || layout[x+1][y] == " ○ " || layout[x+1][y] == " ⊠ "){
             goto stage2;
           } 
           x++;
@@ -491,6 +492,7 @@ public:
           sleep(4);
           if(layout[x][y] == " . "){
             layout[x][y] = " ○ ";
+            x--;
           } else {
             layout[x][y] = " ⊠ ";
             hitCheck();
@@ -508,7 +510,7 @@ public:
             }
           }
         } else if(side == 4){
-          if(y-1 < 0 && layout[y-1][y] == " ○ " && layout[y-1][y] == " ⊠ "){
+          if(y-1 < 0 || layout[y-1][y] == " ○ " || layout[y-1][y] == " ⊠ "){
             goto stage2;
           } 
           y--;
@@ -516,6 +518,7 @@ public:
           sleep(4);
           if(layout[x][y] == " . "){
             layout[x][y] = " ○ ";
+            y++;
           } else {
             layout[x][y] = " ⊠ ";
             hitCheck();
@@ -538,10 +541,12 @@ public:
         stage3:
         if(h_or_v == 0){
           if(side == 1 && y-1 >= 0){
-            y--;
             if(layout[x][y] == " ⊠ "){
+              y--;
               goto stage3;
-            } else if(layout[x][y] == " . "){
+            } 
+            y--;
+            if(layout[x][y] == " . "){
               shootPrint();
               sleep(4);
               layout[x][y] = " ○ ";
@@ -566,10 +571,12 @@ public:
               }
             }
           } else if(side == 2 && y+1 <= 9) {
-            y++;
             if(layout[x][y] == " ⊠ "){
+              y++;
               goto stage3;
-            } else if(layout[x][y] == " . "){
+            }
+            y++; 
+            if(layout[x][y] == " . "){
               layout[x][y] = " ○ ";
             } else if(layout[x][y] == " ○ "){
               side = 1;
@@ -597,10 +604,12 @@ public:
           }
         } else if(h_or_v == 1) {
           if(side == 1 && x-1 >= 0){
-            x--;
             if(layout[x][y] == " ⊠ "){
+              x--;
               goto stage3;
-            } else if(layout[x][y] == " . "){
+            } 
+            x--;
+            if(layout[x][y] == " . "){
               layout[x][y] = " ○ ";
             } else if(layout[x][y] == " ○ "){
               side = 2;
@@ -623,10 +632,12 @@ public:
               }
             }
           } else if(side == 2 <= 9){
-            x++;
             if(layout[x][y] == " ⊠ "){
+              x++;
               goto stage3;
-            } else if(layout[x][y] == " . "){
+            }
+            x++;
+            if(layout[x][y] == " . "){
               layout[x][y] = " ○ ";
             } else if(layout[x][y] == " ○ "){
               side = 1;
@@ -659,10 +670,12 @@ public:
         stage4:
         if(h_or_v == 0){
           if(side == 1 && x-1 >= 0){
-            x--;
-            if(layout[x][y] == " ⊠ "){
+           if(layout[x][y] == " ⊠ "){
+              x--;
               goto stage4;
-            } else if(layout[x][y] == " . "){
+            } 
+            x--;
+            if(layout[x][y] == " . "){
               layout[x][y] = " ○ ";
             } else if(layout[x][y] == " ○ "){
               side = 2;
@@ -682,10 +695,12 @@ public:
               }
             }
           } else if(side == 2 && y+1 <= 9) {
-            y++;
             if(layout[x][y] == " ⊠ "){
+              y++;
               goto stage4;
-            } else if(layout[x][y] == " . "){
+            } 
+            y++; 
+            if(layout[x][y] == " . "){
               layout[x][y] = " ○ ";
             } else if(layout[x][y] == " ○ "){
               side = 1;
@@ -710,10 +725,12 @@ public:
           }
         } else if(h_or_v == 1) {
           if(side == 1 && x-1 >= 0){
-            x--;
             if(layout[x][y] == " ⊠ "){
+              x--;
               goto stage4;
-            } else if(layout[x][y] == " . "){
+            } 
+            x--;
+            if(layout[x][y] == " . "){
               layout[x][y] = " ○ ";
             } else if(layout[x][y] == " ○ "){
               side = 2;
@@ -733,10 +750,12 @@ public:
               }
             }
           } else if(side == 2 <= 9){
-            x++;
             if(layout[x][y] == " ⊠ "){
+              x++;
               goto stage4;
-            } else if(layout[x][y] == " . "){
+            }
+            x++;
+            if(layout[x][y] == " . "){
               layout[x][y] = " ○ ";
             } else if(layout[x][y] == " ○ "){
               side = 1;
