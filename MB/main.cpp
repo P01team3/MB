@@ -364,7 +364,7 @@ public:
         cout << "\033[2J\033[1;1H";
         shootPrint();
         cout << "Хід гравця " << playerT.player;
-        cout << "\n\nВикористовуйте WASD для переміщення прицілу, та любу іншу літеру для вистрілу: ";
+        cout << "\n\nВикористовуйте WASD для переміщення прицілу, та любу іншу літеру для пострілу: ";
         cin >> move;
         switch (move) {
         case 'w':
@@ -453,6 +453,7 @@ public:
             goto stage2;
           } 
           x--;
+          cout << "\033[2J\033[1;1H";
           shootPrint();
           sleep(4);
           if(layout[x][y] == " . "){
@@ -480,6 +481,7 @@ public:
             goto stage2;
           } 
           y++;
+          cout << "\033[2J\033[1;1H";
           shootPrint();
           sleep(4);
           if(layout[x][y] == " . "){
@@ -505,11 +507,12 @@ public:
         } else if(side == 3){
           if(x+1 > 9 || layout[x+1][y] == " ○ " || layout[x+1][y] == " ⊠ "){
             goto stage2;
-          } 
+          }  
           x++;
+          cout << "\033[2J\033[1;1H";
           shootPrint();
           sleep(4);
-          if(layout[x][y] == " . "){
+          if(layout[x][y] == " . "){           
             layout[x][y] = " ○ ";
             x--;
           } else {
@@ -532,10 +535,12 @@ public:
           if(y-1 < 0 || layout[y-1][y] == " ○ " || layout[y-1][y] == " ⊠ "){
             goto stage2;
           } 
-          y--;
+          y--;            
+          cout << "\033[2J\033[1;1H";
           shootPrint();
           sleep(4);
           if(layout[x][y] == " . "){
+
             layout[x][y] = " ○ ";
             y++;
           } else {
@@ -564,7 +569,6 @@ public:
               y--;
               goto stage3;
             } 
-            y--;
             if(layout[x][y] == " . "){
               shootPrint();
               sleep(4);
@@ -594,7 +598,6 @@ public:
               y++;
               goto stage3;
             }
-            y++; 
             if(layout[x][y] == " . "){
               layout[x][y] = " ○ ";
             } else if(layout[x][y] == " ○ "){
@@ -627,7 +630,6 @@ public:
               x--;
               goto stage3;
             } 
-            x--;
             if(layout[x][y] == " . "){
               layout[x][y] = " ○ ";
             } else if(layout[x][y] == " ○ "){
@@ -655,7 +657,6 @@ public:
               x++;
               goto stage3;
             }
-            x++;
             if(layout[x][y] == " . "){
               layout[x][y] = " ○ ";
             } else if(layout[x][y] == " ○ "){
@@ -693,7 +694,6 @@ public:
               x--;
               goto stage4;
             } 
-            x--;
             if(layout[x][y] == " . "){
               layout[x][y] = " ○ ";
             } else if(layout[x][y] == " ○ "){
@@ -718,7 +718,6 @@ public:
               y++;
               goto stage4;
             } 
-            y++; 
             if(layout[x][y] == " . "){
               layout[x][y] = " ○ ";
             } else if(layout[x][y] == " ○ "){
@@ -748,7 +747,6 @@ public:
               x--;
               goto stage4;
             } 
-            x--;
             if(layout[x][y] == " . "){
               layout[x][y] = " ○ ";
             } else if(layout[x][y] == " ○ "){
@@ -773,7 +771,6 @@ public:
               x++;
               goto stage4;
             }
-            x++;
             if(layout[x][y] == " . "){
               layout[x][y] = " ○ ";
             } else if(layout[x][y] == " ○ "){
@@ -1007,7 +1004,7 @@ class Bot {
         cout << "\033[2J\033[1;1H";
         shootPrint();
         cout << "Хід гравця " << playerT.player;
-        cout << "\n\nВикористовуйте WASD для переміщення прицілу, та любу іншу літеру для вистрілу: ";
+        cout << "\n\nВикористовуйте WASD для переміщення прицілу, та любу іншу літеру для пострілу: ";
         cin >> move;
         switch (move) {
         case 'w':
